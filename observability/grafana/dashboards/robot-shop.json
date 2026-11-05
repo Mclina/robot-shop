@@ -1,0 +1,28 @@
+{
+  "id": null,
+  "uid": "493ecd5a-446b-4bf8-bd28-1310cb1a1f30",
+  "title": "Robot Shop Kubernetes Monitoring",
+  "tags": ["robot-shop", "kubernetes", "prometheus"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Monitoring Targets Up",
+      "type": "stat",
+      "datasource": {"type": "prometheus", "uid": "PBFA97CFB590B2093"},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "targets": [{"expr": "up", "refId": "A"}]
+    },
+    {
+      "id": 2,
+      "title": "Available Node Memory",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "PBFA97CFB590B2093"},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "targets": [{"expr": "node_memory_MemAvailable_bytes", "refId": "A"}]
+    }
+  ]
+}
