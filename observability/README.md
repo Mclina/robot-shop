@@ -110,6 +110,7 @@ The Grafana dashboard includes these Nginx panels:
 
 These are web-server operational metrics, not Robot Shop business transaction metrics.
 
+
 ## 5. Grafana
 
 Add the Grafana Helm repository:
@@ -123,14 +124,10 @@ Install Grafana:
 
 ```bash
 helm upgrade --install grafana grafana/grafana \
+  --version 10.5.15 \
   -n observability \
-  --set persistence.enabled=false \
-  --set resources.requests.cpu=50m \
-  --set resources.requests.memory=128Mi \
-  --set resources.limits.cpu=200m \
-  --set resources.limits.memory=256Mi
+  -f observability/grafana/values.yaml
 ```
-
 The datasource and dashboard provisioning files are stored in the Grafana subdirectories. They must be mounted into the Grafana deployment for automatic provisioning.
 
 Dashboard: `Robot Shop Kubernetes Monitoring`.

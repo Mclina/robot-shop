@@ -1,0 +1,36 @@
+replicas: 1
+
+persistence:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+service:
+  type: ClusterIP
+
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+    searchNamespace: observability
+    folder: /tmp/dashboards
+    provider:
+      name: Robot Shop
+      orgid: 1
+      folder: Robot Shop
+      type: file
+      disableDelete: false
+      allowUiUpdates: true
+
+  datasources:
+    enabled: true
+    label: grafana_datasource
+    labelValue: "1"
+    searchNamespace: observability
