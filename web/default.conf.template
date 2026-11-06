@@ -82,7 +82,9 @@ server {
     }
 
     location /nginx_status {
-        stub_status on;
+        stub_status;
+        allow 127.0.0.1;
+        deny all;
         access_log off;
     }
 }

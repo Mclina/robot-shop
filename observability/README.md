@@ -8,6 +8,7 @@ The stack includes:
 
 - Prometheus — metrics collection and monitoring.
 - Node Exporter — host-level metrics.
+- Nginx Prometheus Exporter — Nginx web-server metrics.
 - kube-state-metrics — Kubernetes resource metrics.
 - Grafana — metrics visualisation and dashboards.
 - Fluent Bit — container log collection.
@@ -87,7 +88,29 @@ helm upgrade --install kube-state-metrics prometheus-community/kube-state-metric
   --set resources.limits.memory=128Mi
 ```
 
-## 4. Grafana
+## 4. Nginx Exporter
+
+The Robot Shop web deployment includes an Nginx Prometheus Exporter sidecar.
+
+- Nginx exposes its status endpoint at `/nginx_status`.
+- Access to the status endpoint is restricted to loopback.
+- The exporter scrapes the endpoint through `127.0.0.1:8080`.
+- The exporter exposes metrics on port `9113`.
+- The internal `web-metrics` ClusterIP Service makes metrics available to Prometheus.
+
+Prometheus scrape target:
+
+`web-metrics.robot-shop.svc.cluster.local:9113`
+
+The Grafana dashboard includes these Nginx panels:
+
+- Active Nginx Connections — `nginx_connections_active`
+- HTTP Requests per Second — `rate(nginx_http_requests_total[5m])`
+- Connections Handled per Second — `rate(nginx_connections_handled[5m])`
+
+These are web-server operational metrics, not Robot Shop business transaction metrics.
+
+## 5. Grafana
 
 Add the Grafana Helm repository:
 
@@ -112,7 +135,7 @@ The datasource and dashboard provisioning files are stored in the Grafana subdir
 
 Dashboard: `Robot Shop Kubernetes Monitoring`.
 
-## 5. Fluent Bit
+## 6. Fluent Bit
 
 Add the Helm repository:
 
@@ -135,7 +158,7 @@ helm upgrade --install fluent-bit fluent/fluent-bit \
 
 The current output is stdout for demonstration and verification. It is not persistent centralised log storage.
 
-## 6. OpenTelemetry Collector
+## 7. OpenTelemetry Collector
 
 Deploy the Collector:
 
@@ -150,7 +173,7 @@ OTLP endpoints:
 
 The current Collector uses the debug exporter. Applications must send OTLP telemetry to it before traces, metrics or logs can be observed.
 
-## 7. Verification
+## 8. Verification
 
 Check observability pods:
 
@@ -184,14 +207,15 @@ Check OpenTelemetry Collector logs:
 kubectl logs -n observability deployment/otel-collector --tail=30
 ```
 
-## 8. Known limitations
+## 9. Known limitations
 
 - Prometheus uses ephemeral storage in the playground configuration.
 - Grafana persistence is disabled in the playground configuration.
 - Fluent Bit currently forwards logs to stdout rather than a persistent log backend.
 - OpenTelemetry Collector is deployed, but application instrumentation and end-to-end telemetry verification remain outstanding.
+- Nginx Exporter and its Prometheus scrape configuration have passed local Helm/YAML validation; runtime scraping still needs verification in a Kubernetes cluster.
 - Playground resources and storage may be lost when the temporary environment expires.
 
 ## Project status
 
-The observability components were deployed and their workloads verified as running in the free Kubernetes playground. Further work is required to demonstrate end-to-end application metrics, centralised logging and OpenTelemetry telemetry ingestion.
+The observability components were deployed and their workloads verified as running in the free Kubernetes playground. The Nginx Exporter sidecar, metrics Service, Prometheus scrape configuration and Grafana dashboard panels have passed local configuration validation. Runtime verification of these additions is outstanding. Further work is also required to demonstrate end-to-end application metrics, centralised logging and OpenTelemetry telemetry ingestion.

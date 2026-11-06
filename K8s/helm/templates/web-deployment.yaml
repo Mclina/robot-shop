@@ -37,6 +37,20 @@ spec:
           requests:
             cpu: 25m
             memory: 50Mi
+      - name: nginx-exporter
+        image: nginx/nginx-prometheus-exporter:1.4.2
+        args:
+          - --nginx.scrape-uri=http://127.0.0.1:8080/nginx_status
+        ports:
+          - name: metrics
+            containerPort: 9113
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
       restartPolicy: Always
       {{- with .Values.web.affinity }}
       affinity:
