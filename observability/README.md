@@ -24,11 +24,9 @@ observability/
 ├── grafana/
 │   ├── dashboards/
 │   │   └── robot-shop.json
-│   └── provisioning/
-│       ├── dashboards/
-│       │   └── dashboards.yaml
-│       └── datasources/
-│           └── prometheus.yaml
+│   ├── dashboard-configmap.yaml
+│   ├── datasource-configmap.yaml
+│   └── values.yaml
 ├── fluent-bit/
 │   └── values.yaml
 └── opentelemetry/
@@ -113,6 +111,13 @@ These are web-server operational metrics, not Robot Shop business transaction me
 
 ## 5. Grafana
 
+Apply the Grafana dashboard and datasource ConfigMaps:
+
+```bash
+kubectl apply -f observability/grafana/dashboard-configmap.yaml
+kubectl apply -f observability/grafana/datasource-configmap.yaml
+```
+
 Install Grafana using the Grafana Community Helm chart:
 
 ```bash
@@ -129,23 +134,14 @@ Dashboard: `Robot Shop Kubernetes Monitoring`.
 
 ## 6. Fluent Bit
 
-Add the Helm repository:
+Install Fluent Bit using the official Fluent Helm chart:
 
 ```bash
-helm repo add fluent https://fluent.github.io/helm-charts
-helm repo update
-```
-
-Install Fluent Bit:
-
-```bash
-helm upgrade --install fluent-bit fluent/fluent-bit \
+helm upgrade --install fluent-bit \
+  oci://ghcr.io/fluent/helm-charts/fluent-bit \
+  --version 0.58.3 \
   -n observability \
-  -f observability/fluent-bit/values.yaml \
-  --set resources.requests.cpu=10m \
-  --set resources.requests.memory=32Mi \
-  --set resources.limits.cpu=100m \
-  --set resources.limits.memory=128Mi
+  -f observability/fluent-bit/values.yaml
 ```
 
 The current output is stdout for demonstration and verification. It is not persistent centralised log storage.
