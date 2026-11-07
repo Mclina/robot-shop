@@ -113,22 +113,17 @@ These are web-server operational metrics, not Robot Shop business transaction me
 
 ## 5. Grafana
 
-Add the Grafana Helm repository:
+Install Grafana using the Grafana Community Helm chart:
 
 ```bash
-helm repo add grafana https://grafana.github.io/helm-charts
-helm repo update
-```
-
-Install Grafana:
-
-```bash
-helm upgrade --install grafana grafana/grafana \
-  --version 10.5.15 \
+helm upgrade --install grafana \
+  oci://ghcr.io/grafana-community/helm-charts/grafana \
+  --version 13.5.0 \
   -n observability \
   -f observability/grafana/values.yaml
 ```
-The datasource and dashboard provisioning files are stored in the Grafana subdirectories. They must be mounted into the Grafana deployment for automatic provisioning.
+
+The Grafana sidecars automatically discover dashboard and datasource ConfigMaps labelled `grafana_dashboard: "1"` and `grafana_datasource: "1"` in the `observability` namespace.
 
 Dashboard: `Robot Shop Kubernetes Monitoring`.
 
