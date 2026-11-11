@@ -207,3 +207,17 @@ kubectl logs -n observability deployment/otel-collector --tail=30
 ## Project status
 
 The observability components were deployed and their workloads verified as running in the free Kubernetes playground. The Nginx Exporter sidecar, metrics Service, Prometheus scrape configuration and Grafana dashboard panels have passed local configuration validation. Runtime verification of these additions is outstanding. Further work is also required to demonstrate end-to-end application metrics, centralised logging and OpenTelemetry telemetry ingestion.
+
+## OpenTelemetry Trace Ingestion Validation
+
+The OpenTelemetry Collector was tested using an OTLP HTTP trace request.
+
+- Endpoint: `http://localhost:4318/v1/traces`
+- Protocol: OTLP over HTTP
+- HTTP response: `200 OK`
+- Response body: `{"partialSuccess":{}}`
+- Collector debug exporter: `resource spans: 1, spans: 1`
+
+Result: Successfully verified that the OpenTelemetry Collector receives and processes trace data through its OTLP HTTP receiver.
+
+The Collector is configured with traces, metrics, and logs pipelines using the OTLP receiver, batch processor, and debug exporter. Only the traces pipeline was explicitly tested during this validation.
