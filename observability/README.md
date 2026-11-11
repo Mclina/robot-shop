@@ -200,13 +200,21 @@ kubectl logs -n observability deployment/otel-collector --tail=30
 - Prometheus uses ephemeral storage in the playground configuration.
 - Grafana persistence is disabled in the playground configuration.
 - Fluent Bit currently forwards logs to stdout rather than a persistent log backend.
-- OpenTelemetry Collector is deployed, but application instrumentation and end-to-end telemetry verification remain outstanding.
-- Nginx Exporter and its Prometheus scrape configuration have passed local Helm/YAML validation; runtime scraping still needs verification in a Kubernetes cluster.
+- OpenTelemetry Collector trace ingestion was verified using an OTLP HTTP test. Application-level instrumentation remains outstanding.
+- Prometheus runtime scraping was verified for Prometheus, Node Exporter, Kube State Metrics and the Robot Shop web metrics endpoint.
 - Playground resources and storage may be lost when the temporary environment expires.
 
 ## Project status
 
-The observability components were deployed and their workloads verified as running in the free Kubernetes playground. The Nginx Exporter sidecar, metrics Service, Prometheus scrape configuration and Grafana dashboard panels have passed local configuration validation. Runtime verification of these additions is outstanding. Further work is also required to demonstrate end-to-end application metrics, centralised logging and OpenTelemetry telemetry ingestion.
+Robot Shop and the observability stack were successfully deployed in the Kubernetes playground.
+
+- Robot Shop application workloads: running and healthy.
+- Prometheus: deployed; all four configured scrape targets verified healthy.
+- Grafana: deployed; Robot Shop Kubernetes Monitoring dashboard provisioned successfully.
+- Fluent Bit: deployed; Robot Shop container logs and Kubernetes metadata observed in its output.
+- OpenTelemetry Collector: deployed; OTLP HTTP trace ingestion verified with one resource span and one span processed by the debug exporter.
+
+The OpenTelemetry traces pipeline was explicitly tested. Metrics and logs pipelines are configured but were not separately tested with OTLP payloads. Application-level OpenTelemetry instrumentation and a persistent log backend remain outside the verified scope of this deployment.
 
 ## OpenTelemetry Trace Ingestion Validation
 
