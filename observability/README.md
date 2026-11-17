@@ -229,3 +229,20 @@ The OpenTelemetry Collector was tested using an OTLP HTTP trace request.
 Result: Successfully verified that the OpenTelemetry Collector receives and processes trace data through its OTLP HTTP receiver.
 
 The Collector is configured with traces, metrics, and logs pipelines using the OTLP receiver, batch processor, and debug exporter. Only the traces pipeline was explicitly tested during this validation.
+
+## Loki log collection (Iximiuz validation)
+
+- Deployed Loki in SingleBinary mode with 2Gi persistent storage.
+- Deployed Fluent Bit as a DaemonSet to collect Kubernetes container logs.
+- Configured Fluent Bit to forward logs to the Loki gateway.
+- Verified log ingestion using Loki's `query_range` API.
+- Retrieved 20 log entries across Robot Shop services.
+- Verified filtering by `namespace="robot-shop"`, `service="web"` and error text; the test returned 9 matching entries.
+- Kubernetes metadata includes service, pod, namespace and container details.
+
+Example query:
+
+```logql
+{namespace="robot-shop",service="web"} |~ "(?i)error"
+
+
